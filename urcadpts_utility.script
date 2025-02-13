@@ -1,0 +1,94 @@
+############################
+# begin standard functions #
+############################
+
+# check incoming data
+if (length(urcadpts_x_list)==length(urcadpts_y_list) and length(urcadpts_x_list)==length(urcadpts_z_list)):
+    # no issues
+else:
+    popup(
+        "<a style='font-size:24'>"+
+        "<a style='color:red'>"+
+        "Warning: error with incoming data"+
+        "</>"+"<br>"+"<br>"+
+        "Length of X column: "+to_str(length(urcadpts_x_list))+"<br>"+
+        "Length of Y column: "+to_str(length(urcadpts_y_list))+"<br>"+
+        "Length of Z column: "+to_str(length(urcadpts_z_list))+"<br>"+
+        "Source: urcadpts"
+    )
+end
+
+#################################################################
+# below is the standard functions to interact with the data set #
+#################################################################
+
+def urcadpts_get_next_point():
+    local xyz_i=[urcadpts_x_list[urcadpts_i], urcadpts_y_list[urcadpts_i], urcadpts_z_list[urcadpts_i]]
+    local my_waypt=p[xyz_i[0]/1000,xyz_i[1]/1000,xyz_i[2]/1000,0,0,0]
+    my_waypt=pose_trans(urcadpts_pcs,my_waypt)
+    my_waypt[3]=urcadpts_orientation[3]
+    my_waypt[4]=urcadpts_orientation[4]
+    my_waypt[5]=urcadpts_orientation[5]
+    
+    # update the count
+    urcadpts_i=urcadpts_i+1
+    # return result
+    return my_waypt
+end
+
+# boolean check to see if there are more points remaining
+def urcadpts_pts_remaining():
+    if (urcadpts_i<urcadpts_len):
+        return True
+    else:
+        return False
+    end
+end
+
+# returns info about the data set
+# returns for the number of points are indexed at 1, not 0, here
+def urcadpts_get_status():
+    local num_of_points = urcadpts_len+1
+    local current_index = urcadpts_i+1
+    local are_there_more_points=0
+    if (urcadpts_pts_remaining()):
+        are_there_more_points=1
+    end
+    return [num_of_points,current_index,are_there_more_points]
+end
+
+# functions for setting up the whole thing
+# set what orientation the resulting waypoints should have
+def urcadpts_copy_orientation(waypt):
+    global urcadpts_orientation=waypt
+end
+# set the part coordinate system (called PCS)
+def urcadpts_set_pcs(waypt):
+    global urcadpts_pcs=waypt
+end
+
+# config the operation
+def urcadpts_config(pcs=p[0,0,0,0,0,0],orientation=p[0,0,0,0,0,0]):
+    # can be run without giving config info, and is auto run this way at first
+    # user can provide new info if they want
+    urcadpts_set_pcs(pcs)
+    urcadpts_copy_orientation(orientation)
+end
+
+# functions for setting orientation parallel to and reversed to pcs
+def urcadpts_use_pcs_as_orientation(invert=False):
+    if (invert==False):
+        urcadpts_copy_orientation(urcadpts_pcs)
+    else:
+        urcadpts_copy_orientation(pose_trans(urcadpts_pcs, p[0,0,0,-3.14159,0,0]))
+    end
+end
+
+# variables and functions to initialize
+# urcadpts_x_list is always named that
+# same for y and z lists
+# these comesfrom converted toolpath file, but can be unsupressed if needed
+# global urcadpts_i = 0 
+# global urcadpts_len = length(urcadpts_x_list)
+
+urcadpts_config()
