@@ -58,7 +58,7 @@ def generateOutput():
 
     # generate name of output file base on input filename
     input_file_name=toolpathfile.partition(".")[0]
-    if(checkbox_data_append.get()==True):
+    if(checkbox_data_include.get()==True):
         output_file_name=input_file_name+'_points_functions.script' 
     else:
         output_file_name=input_file_name+'_points.script' 
@@ -178,6 +178,18 @@ def generateOutput():
         my_output_file.write('# pgra@universal-robots.com'+'\n')
         my_output_file.write('####################'+'\n\n')
 
+        # include the utility file
+        if(checkbox_data_include.get()==True):
+            with open(script_utility) as f:
+                for line in f:
+                    my_output_file.write(line)
+            my_output_file.write('\n\n')
+
+        # mark that this is the start of the data from the toolpath file
+        my_output_file.write('###############\n')
+        my_output_file.write('# start of information from '+out_name+'\n')
+        my_output_file.write('###############\n')
+
         # write first line
         my_output_file.write('# this is the xyz data from: '+str(input_file_name)+'.nc'+'\n')
         # name the output data set
@@ -216,13 +228,6 @@ def generateOutput():
         my_output_file.write('###############\n')
         my_output_file.write('# end of information from '+out_name+'\n')
         my_output_file.write('###############\n')
-
-        
-        # append the utility file
-        if(checkbox_data_append.get()==True):
-            with open(script_utility) as f:
-                for line in f:
-                    my_output_file.write(line)
         
         # update final status
         output_status = "Conversion successful!"
@@ -303,11 +308,11 @@ checkbox_entry_exit=Checkbutton(window,
                                 variable=checkbox_data_entryexit)
 checkbox_entry_exit.select()
 
-checkbox_data_append=BooleanVar()
-checkbox_append=Checkbutton(window,
-                            text='Append urcadpts_utility.script?\n Only one file per polyscope program\n can have the function definitions',
-                            variable=checkbox_data_append)
-checkbox_append.select()
+checkbox_data_include=BooleanVar()
+checkbox_include=Checkbutton(window,
+                            text='Include urcadpts_utility.script?\n Only one file per polyscope program\n can have the function definitions',
+                            variable=checkbox_data_include)
+checkbox_include.select()
 
 label_log = Label(window,
                   text=log_label_text,
@@ -327,7 +332,7 @@ button_generate.grid(column=1, row=3, pady=(5, 5))
 
 checkbox_entry_exit.grid(column=1,row=4, pady=(5,5))
 
-checkbox_append.grid(column=1,row=5, pady=(5,5))
+checkbox_include.grid(column=1,row=5, pady=(5,5))
 
 button_exit.grid(column=1, row=6, pady=(5, 5))
 

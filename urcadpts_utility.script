@@ -1,22 +1,14 @@
+
 ############################
 # begin standard functions #
 ############################
 
-# check incoming data
-if (length(urcadpts_x_list)==length(urcadpts_y_list) and length(urcadpts_x_list)==length(urcadpts_z_list)):
-    # no issues
-else:
-    popup(
-        "<a style='font-size:24'>"+
-        "<a style='color:red'>"+
-        "Warning: error with incoming data"+
-        "</>"+"<br>"+"<br>"+
-        "Length of X column: "+to_str(length(urcadpts_x_list))+"<br>"+
-        "Length of Y column: "+to_str(length(urcadpts_y_list))+"<br>"+
-        "Length of Z column: "+to_str(length(urcadpts_z_list))+"<br>"+
-        "Source: urcadpts"
-    )
-end
+# these will be overwritted by the values from the source file, but must be initialized
+num_of_rows=3
+global urcadpts_x_list = make_list(num_of_rows, 0.0, 100)
+global urcadpts_x_list = make_list(num_of_rows, 0.0, 100)
+global urcadpts_x_list = make_list(num_of_rows, 0.0, 100)
+
 
 #################################################################
 # below is the standard functions to interact with the data set #
