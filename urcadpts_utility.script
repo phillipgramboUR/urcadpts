@@ -84,3 +84,26 @@ end
 # global urcadpts_len = length(urcadpts_x_list)
 
 urcadpts_config()
+#####################################
+# V2: path following for PolyScopeX #
+#####################################
+
+def urcadpts_follow_path(a=0.1,v=0.025,r=0.005):
+  # read in params
+  local my_acc = a
+  local my_speed = v 
+  local my_blend_radii = r
+  # get next point and move there
+  while urcadpts_pts_remaining():
+    local target_pose = urcadpts_get_next_point()
+    movep(target_pose, my_acc, my_speed, my_blend_radii)
+  end
+  # stop gently
+  stopl(my_acc)
+
+end
+
+# to run, call the following:
+# urcadpts_set_pcs(waypt)
+# urcadpts_copy_orientation(waypt)
+# urcadpts_follow_path(a=0.1, v=0.025, r=0.005)
